@@ -2,10 +2,34 @@
 
 Desktopová aplikace v **Avalonia (.NET 8, MVVM)** pro správu vybavení skauts­kého oddílu. Umožňuje evidovat předměty vybavení a záznamy o jejich výpůjčkách.
 
-## Schéma databáze
+## ER diagram
 
-```
-kategorie_vybaveni ──< vybaveni ──< vypujcka
+```mermaid
+erDiagram
+    kategorie_vybaveni {
+        int id PK
+        varchar nazev "NOT NULL UNIQUE"
+    }
+
+    vybaveni {
+        int id PK
+        varchar nazev "NOT NULL"
+        text popis "nullable"
+        int pocet_kusu "DEFAULT 1, CHECK >= 1"
+        int kategorie_id FK
+    }
+
+    vypujcka {
+        int id PK
+        int vybaveni_id FK
+        varchar jmeno_cloveka "NOT NULL"
+        date datum_vypujcky "NOT NULL"
+        date datum_vraceni "nullable"
+        text poznamka "nullable"
+    }
+
+    kategorie_vybaveni ||--o{ vybaveni : "kategorie_id"
+    vybaveni ||--o{ vypujcka : "vybaveni_id (CASCADE)"
 ```
 
 - **kategorie_vybaveni** – číselník kategorií (stan, lano, …)
