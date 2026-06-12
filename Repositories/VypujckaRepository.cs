@@ -1,3 +1,8 @@
+// ============================================================
+// IMPLEMENTACE: REPOSITORY PRO VÝPŮJČKY
+// Načítá vždy jen výpůjčky pro konkrétní vybavení (podle FK).
+// ============================================================
+
 using Npgsql;
 using OddiloveVybaveni.Models;
 
@@ -9,16 +14,24 @@ public class VypujckaRepository : IVypujckaRepository
 
     public VypujckaRepository(DatabaseConfig config) => _connStr = config.ConnectionString;
 
+    // ----------------------------------------------------------------
+    // HELPER: Převede řádek z databáze na C# objekt Vypujcka
+    // ----------------------------------------------------------------
     private static Vypujcka MapRow(NpgsqlDataReader r) => new()
     {
         Id = r.GetInt32(0),
         VybaveniId = r.GetInt32(1),
         JmenoCloveka = r.GetString(2),
+        // GetFieldValue<DateOnly> = Npgsql umí přímo mapovat PostgreSQL DATE → .NET DateOnly
         DatumVypujcky = r.GetFieldValue<DateOnly>(3),
+        // Datum vrácení může být NULL — kontrolujeme IsDBNull
         DatumVraceni = r.IsDBNull(4) ? null : r.GetFieldValue<DateOnly>(4),
         Poznamka = r.IsDBNull(5) ? null : r.GetString(5)
     };
 
+    // ----------------------------------------------------------------
+    // GET BY VYBAVENI ID — výpůjčky od nejnovější po nejstarší
+    // ----------------------------------------------------------------
     public async Task<IEnumerable<Vypujcka>> GetByVybaveniIdAsync(int vybaveniId)
     {
         var list = new List<Vypujcka>();
@@ -31,12 +44,16 @@ public class VypujckaRepository : IVypujckaRepository
             WHERE vybaveni_id = @vid
             ORDER BY datum_vypujcky DESC
             """, conn);
+        // @vid = parametr s ID vybavení — vrátíme jen výpůjčky tohoto vybavení
         cmd.Parameters.AddWithValue("vid", vybaveniId);
         await using var r = await cmd.ExecuteReaderAsync();
         while (await r.ReadAsync()) list.Add(MapRow(r));
         return list;
     }
 
+    // ----------------------------------------------------------------
+    // CREATE — vloží novou výpůjčku
+    // ----------------------------------------------------------------
     public async Task<Vypujcka> CreateAsync(Vypujcka v)
     {
         await using var conn = new NpgsqlConnection(_connStr);
@@ -50,12 +67,16 @@ public class VypujckaRepository : IVypujckaRepository
         cmd.Parameters.AddWithValue("vid", v.VybaveniId);
         cmd.Parameters.AddWithValue("jmeno", v.JmenoCloveka);
         cmd.Parameters.AddWithValue("dv", v.DatumVypujcky);
+        // Datum vrácení a poznámka jsou nepovinné — null → DBNull.Value (SQL NULL)
         cmd.Parameters.AddWithValue("dr", (object?)v.DatumVraceni ?? DBNull.Value);
         cmd.Parameters.AddWithValue("poz", (object?)v.Poznamka ?? DBNull.Value);
         v.Id = (int)(await cmd.ExecuteScalarAsync())!;
         return v;
     }
 
+    // ----------------------------------------------------------------
+    // UPDATE — aktualizuje výpůjčku (např. přidá datum vrácení)
+    // ----------------------------------------------------------------
     public async Task UpdateAsync(Vypujcka v)
     {
         await using var conn = new NpgsqlConnection(_connStr);
@@ -74,11 +95,15 @@ public class VypujckaRepository : IVypujckaRepository
         await cmd.ExecuteNonQueryAsync();
     }
 
+    // ----------------------------------------------------------------
+    // DELETE — smaže jednu výpůjčku
+    // ----------------------------------------------------------------
     public async Task DeleteAsync(int id)
     {
         await using var conn = new NpgsqlConnection(_connStr);
         await conn.OpenAsync();
-        await using var cmd = new NpgsqlCommand("DELETE FROM vypujcka WHERE id = @id", conn);
+        await using var cmd = new NpgsqlCommand(
+            "DELETE FROM vypujcka WHERE id = @id", conn);
         cmd.Parameters.AddWithValue("id", id);
         await cmd.ExecuteNonQueryAsync();
     }
