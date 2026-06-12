@@ -23,11 +23,21 @@ public static class AppServices
 
     public static void Initialize()
     {
-        // Načte DATABASE_URL z prostředí (.env souboru)
-        // ?? throw = pokud proměnná chybí, aplikace okamžitě spadne s vysvětlující chybou
-        var connStr = Environment.GetEnvironmentVariable("DATABASE_URL")
-            ?? throw new InvalidOperationException(
-                "Proměnná DATABASE_URL není nastavena. Zkontroluj soubor .env");
+        // Načte jednotlivé DB proměnné z .env souboru
+        // ?? throw = pokud proměnná chybí, aplikace okamžitě spadne s čitelnou chybou
+        var host     = Environment.GetEnvironmentVariable("DB_HOST")
+            ?? throw new InvalidOperationException("DB_HOST není nastaveno. Zkontroluj .env");
+        var port     = Environment.GetEnvironmentVariable("DB_PORT") ?? "5432";
+        var user     = Environment.GetEnvironmentVariable("DB_USER")
+            ?? throw new InvalidOperationException("DB_USER není nastaveno. Zkontroluj .env");
+        var password = Environment.GetEnvironmentVariable("DB_PASSWORD")
+            ?? throw new InvalidOperationException("DB_PASSWORD není nastaveno. Zkontroluj .env");
+        var dbName   = Environment.GetEnvironmentVariable("DB_NAME")
+            ?? throw new InvalidOperationException("DB_NAME není nastaveno. Zkontroluj .env");
+
+        // Sestaví Npgsql connection string z jednotlivých proměnných
+        // Formát vyžadovaný knihovnou Npgsql pro připojení k PostgreSQL
+        var connStr = $"Host={host};Port={port};Username={user};Password={password};Database={dbName}";
 
         // ServiceCollection = "seznam" závislostí, které chceme zaregistrovat
         var services = new ServiceCollection();
