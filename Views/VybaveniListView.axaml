@@ -1,0 +1,89 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:OddiloveVybaveni.ViewModels"
+             xmlns:m="clr-namespace:OddiloveVybaveni.Models"
+             x:Class="OddiloveVybaveni.Views.VybaveniListView"
+             x:DataType="vm:VybaveniListViewModel">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" Margin="20">
+
+        <!-- Nadpis -->
+        <TextBlock Grid.Row="0"
+                   Text="Správa oddílového vybavení"
+                   FontSize="24" FontWeight="Bold"
+                   Margin="0,0,0,16" />
+
+        <!-- Vyhledávání + tlačítko Přidat -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+            <TextBox Grid.Column="0"
+                     Text="{Binding SearchText}"
+                     Watermark="Hledat podle názvu nebo kategorie…"
+                     Margin="0,0,10,0" />
+            <Button Grid.Column="1"
+                    Content="+ Přidat vybavení"
+                    Command="{Binding AddCommand}" />
+        </Grid>
+
+        <!-- Záhlaví tabulky -->
+        <Grid Grid.Row="2"
+              ColumnDefinitions="*,170,80,180"
+              Background="#E8E8E8"
+              Margin="0,0,0,0">
+            <TextBlock Grid.Column="0" Text="Název" FontWeight="SemiBold" Margin="10,6" />
+            <TextBlock Grid.Column="1" Text="Kategorie" FontWeight="SemiBold" Margin="10,6" />
+            <TextBlock Grid.Column="2" Text="Kusů" FontWeight="SemiBold" Margin="10,6" />
+            <TextBlock Grid.Column="3" Text="Akce" FontWeight="SemiBold" Margin="10,6" />
+        </Grid>
+
+        <!-- Seznam vybavení -->
+        <ListBox Grid.Row="3"
+                 ItemsSource="{Binding Items}"
+                 SelectionMode="Single"
+                 Background="White">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="m:Vybaveni">
+                    <Grid ColumnDefinitions="*,170,80,180"
+                          MinHeight="38">
+                        <TextBlock Grid.Column="0"
+                                   Text="{Binding Nazev}"
+                                   VerticalAlignment="Center"
+                                   Margin="10,4" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding Kategorie.Nazev}"
+                                   VerticalAlignment="Center"
+                                   Margin="10,4" />
+                        <TextBlock Grid.Column="2"
+                                   Text="{Binding PocetKusu}"
+                                   VerticalAlignment="Center"
+                                   Margin="10,4" />
+                        <StackPanel Grid.Column="3"
+                                    Orientation="Horizontal"
+                                    Spacing="4"
+                                    VerticalAlignment="Center"
+                                    Margin="6,4">
+                            <Button Content="Detail"
+                                    Command="{Binding $parent[UserControl].((vm:VybaveniListViewModel)DataContext).OpenDetailCommand}"
+                                    CommandParameter="{Binding}"
+                                    Padding="8,3" />
+                            <Button Content="Upravit"
+                                    Command="{Binding $parent[UserControl].((vm:VybaveniListViewModel)DataContext).EditCommand}"
+                                    CommandParameter="{Binding}"
+                                    Padding="8,3" />
+                            <Button Content="Smazat"
+                                    Command="{Binding $parent[UserControl].((vm:VybaveniListViewModel)DataContext).DeleteCommand}"
+                                    CommandParameter="{Binding}"
+                                    Padding="8,3"
+                                    Foreground="Red" />
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <!-- Stavový řádek -->
+        <TextBlock Grid.Row="4"
+                   Text="{Binding Items.Count, StringFormat='Celkem: {0} položek'}"
+                   Margin="0,8,0,0"
+                   Foreground="#666666" />
+    </Grid>
+</UserControl>

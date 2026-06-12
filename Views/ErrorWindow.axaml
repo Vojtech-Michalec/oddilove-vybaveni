@@ -1,0 +1,20 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="OddiloveVybaveni.Views.ErrorWindow"
+        Title="Chyba"
+        Width="380" Height="160"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="*,Auto" Margin="20">
+        <TextBlock Grid.Row="0"
+                   x:Name="MessageText"
+                   TextWrapping="Wrap"
+                   VerticalAlignment="Center" />
+        <Button Grid.Row="1"
+                Content="OK"
+                HorizontalAlignment="Right"
+                Margin="0,12,0,0"
+                Click="OnOkClick" />
+    </Grid>
+</Window>

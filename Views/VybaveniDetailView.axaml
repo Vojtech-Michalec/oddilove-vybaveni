@@ -1,0 +1,115 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:OddiloveVybaveni.ViewModels"
+             xmlns:m="clr-namespace:OddiloveVybaveni.Models"
+             x:Class="OddiloveVybaveni.Views.VybaveniDetailView"
+             x:DataType="vm:VybaveniDetailViewModel">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,*" Margin="20">
+
+        <!-- Navigace zpět + tlačítko Upravit -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,16">
+            <Button Grid.Column="0"
+                    Content="← Zpět na seznam"
+                    Command="{Binding BackCommand}"
+                    Margin="0,0,16,0" />
+            <TextBlock Grid.Column="1"
+                       Text="{Binding Vybaveni.Nazev}"
+                       FontSize="22" FontWeight="Bold"
+                       VerticalAlignment="Center"
+                       TextTrimming="CharacterEllipsis" />
+            <Button Grid.Column="2"
+                    Content="✏ Upravit vybavení"
+                    Command="{Binding EditVybaveniCommand}" />
+        </Grid>
+
+        <!-- Info panel -->
+        <Border Grid.Row="1"
+                Background="#F0F4F8"
+                CornerRadius="6"
+                Padding="14"
+                Margin="0,0,0,16">
+            <StackPanel Spacing="6">
+                <Grid ColumnDefinitions="130,*">
+                    <TextBlock Grid.Column="0" Text="Kategorie:" FontWeight="SemiBold" />
+                    <TextBlock Grid.Column="1" Text="{Binding Vybaveni.Kategorie.Nazev}" />
+                </Grid>
+                <Grid ColumnDefinitions="130,*">
+                    <TextBlock Grid.Column="0" Text="Počet kusů:" FontWeight="SemiBold" />
+                    <TextBlock Grid.Column="1" Text="{Binding Vybaveni.PocetKusu}" />
+                </Grid>
+                <Grid ColumnDefinitions="130,*">
+                    <TextBlock Grid.Column="0" Text="Popis:" FontWeight="SemiBold" />
+                    <TextBlock Grid.Column="1"
+                               Text="{Binding Vybaveni.Popis}"
+                               TextWrapping="Wrap" />
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <!-- Záhlaví výpůjček -->
+        <Grid Grid.Row="2" ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+            <TextBlock Text="Výpůjčky"
+                       FontSize="16" FontWeight="SemiBold"
+                       VerticalAlignment="Center" />
+            <Button Grid.Column="1"
+                    Content="+ Přidat výpůjčku"
+                    Command="{Binding AddVypujckaCommand}" />
+        </Grid>
+
+        <!-- Záhlaví sloupců výpůjček -->
+        <Grid Grid.Row="3"
+              ColumnDefinitions="*,110,110,*,140"
+              Background="#E8E8E8">
+            <TextBlock Grid.Column="0" Text="Jméno" FontWeight="SemiBold" Margin="10,6" />
+            <TextBlock Grid.Column="1" Text="Půjčeno od" FontWeight="SemiBold" Margin="10,6" />
+            <TextBlock Grid.Column="2" Text="Vráceno" FontWeight="SemiBold" Margin="10,6" />
+            <TextBlock Grid.Column="3" Text="Poznámka" FontWeight="SemiBold" Margin="10,6" />
+            <TextBlock Grid.Column="4" Text="Akce" FontWeight="SemiBold" Margin="10,6" />
+        </Grid>
+
+        <!-- Seznam výpůjček -->
+        <ListBox Grid.Row="4"
+                 ItemsSource="{Binding Vypujcky}"
+                 Background="White">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="m:Vypujcka">
+                    <Grid ColumnDefinitions="*,110,110,*,140" MinHeight="36">
+                        <TextBlock Grid.Column="0"
+                                   Text="{Binding JmenoCloveka}"
+                                   VerticalAlignment="Center"
+                                   Margin="10,4" />
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding DatumVypujcky}"
+                                   VerticalAlignment="Center"
+                                   Margin="10,4" />
+                        <TextBlock Grid.Column="2"
+                                   Text="{Binding DatumVraceni}"
+                                   VerticalAlignment="Center"
+                                   Margin="10,4" />
+                        <TextBlock Grid.Column="3"
+                                   Text="{Binding Poznamka}"
+                                   VerticalAlignment="Center"
+                                   Margin="10,4"
+                                   TextTrimming="CharacterEllipsis" />
+                        <StackPanel Grid.Column="4"
+                                    Orientation="Horizontal"
+                                    Spacing="4"
+                                    VerticalAlignment="Center"
+                                    Margin="6,4">
+                            <Button Content="Upravit"
+                                    Command="{Binding $parent[UserControl].((vm:VybaveniDetailViewModel)DataContext).EditVypujckaCommand}"
+                                    CommandParameter="{Binding}"
+                                    Padding="8,3" />
+                            <Button Content="Smazat"
+                                    Command="{Binding $parent[UserControl].((vm:VybaveniDetailViewModel)DataContext).DeleteVypujckaCommand}"
+                                    CommandParameter="{Binding}"
+                                    Padding="8,3"
+                                    Foreground="Red" />
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</UserControl>

@@ -1,0 +1,54 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:OddiloveVybaveni.ViewModels"
+        x:Class="OddiloveVybaveni.Views.VypujckaFormWindow"
+        x:DataType="vm:VypujckaFormViewModel"
+        Title="{Binding Title}"
+        Width="420" Height="380"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="*,Auto" Margin="20">
+        <StackPanel Grid.Row="0" Spacing="10">
+
+            <!-- Jméno -->
+            <TextBlock Text="Jméno osoby *" FontWeight="SemiBold" />
+            <TextBox Text="{Binding JmenoCloveka}" Watermark="Celé jméno" />
+            <TextBlock Text="{Binding JmenoError}" Foreground="Red" FontSize="12"
+                       IsVisible="{Binding JmenoError, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+
+            <!-- Datum půjčení -->
+            <TextBlock Text="Datum půjčení *" FontWeight="SemiBold" />
+            <DatePicker SelectedDate="{Binding DatumVypujcky}"
+                        HorizontalAlignment="Stretch" />
+
+            <!-- Vráceno -->
+            <CheckBox Content="Vybavení bylo vráceno"
+                      IsChecked="{Binding MaVraceni}" />
+
+            <StackPanel IsVisible="{Binding MaVraceni}" Spacing="6">
+                <TextBlock Text="Datum vrácení" FontWeight="SemiBold" />
+                <DatePicker SelectedDate="{Binding DatumVraceni}"
+                            HorizontalAlignment="Stretch" />
+            </StackPanel>
+
+            <!-- Poznámka -->
+            <TextBlock Text="Poznámka" FontWeight="SemiBold" />
+            <TextBox Text="{Binding Poznamka}"
+                     Watermark="Volitelná poznámka…"
+                     AcceptsReturn="True"
+                     Height="60" />
+        </StackPanel>
+
+        <!-- Tlačítka -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto,Auto" Margin="0,16,0,0">
+            <Button Grid.Column="1"
+                    Content="Uložit"
+                    Command="{Binding SaveCommand}"
+                    Margin="0,0,8,0" />
+            <Button Grid.Column="2"
+                    Content="Zrušit"
+                    Command="{Binding CancelCommand}" />
+        </Grid>
+    </Grid>
+</Window>
