@@ -7,7 +7,7 @@ using Avalonia;
 using OddiloveVybaveni;
 
 // 1. Načte soubor .env ze složky projektu (nebo nadřazené složky)
-//    .env obsahuje DATABASE_URL s connection stringem k PostgreSQL
+//    .env obsahuje DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME
 //    TraversePath() = hledá .env soubor od aktuální složky směrem nahoru
 DotNetEnv.Env.TraversePath().Load();
 

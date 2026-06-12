@@ -6,6 +6,10 @@ Desktopová aplikace v **Avalonia (.NET 8, MVVM)** pro správu vybavení skauts�
 
 ```mermaid
 erDiagram
+
+    kategorie_vybaveni ||--o{ vybaveni : "kategorie_id"
+    vybaveni ||--o{ vypujcka : "vybaveni_id (CASCADE)"
+    
     kategorie_vybaveni {
         int id PK
         varchar nazev "NOT NULL UNIQUE"
@@ -27,9 +31,6 @@ erDiagram
         date datum_vraceni "nullable"
         text poznamka "nullable"
     }
-
-    kategorie_vybaveni ||--o{ vybaveni : "kategorie_id"
-    vybaveni ||--o{ vypujcka : "vybaveni_id (CASCADE)"
 ```
 
 - **kategorie_vybaveni** – číselník kategorií (stan, lano, …)
