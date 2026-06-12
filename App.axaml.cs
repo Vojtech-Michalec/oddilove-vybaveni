@@ -7,6 +7,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Microsoft.Extensions.DependencyInjection;
 using OddiloveVybaveni.ViewModels;
 using OddiloveVybaveni.Views;
 
